@@ -147,3 +147,4 @@ For transformer architecture details, refer to:
 - Positional encoding formulas in `encoder_classifier.py`
 - PyTorch documentation for `nn.TransformerEncoder`
 - The assignment notebook for conceptual explanations
+# -n-gram-language-model-and-a-Transformer-Encoder-model-for-text-classification
