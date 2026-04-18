@@ -1,0 +1,186 @@
+11-411/11-611 Homework Assignment 2 - Written Answers
+======================================================
+
+4.1 N-gram Counts (10 points)
+-----------------------------
+
+1. How many unique 2-grams are present in the business dataset? (2 points)
+   Answer: 83,819 unique 2-grams
+
+2. How many unique 3-grams are present in the business dataset? (2 points)
+   Answer: 141,221 unique 3-grams
+
+3. How many unique 2-grams are present in the sports dataset? (2 points)
+   Answer: 77,398 unique 2-grams
+
+4. How many unique 3-grams are present in the sports dataset? (2 points)
+   Answer: 135,645 unique 3-grams
+
+5. How many possible 2- and 3-grams could there be, given the same vocabulary? How do the empirical counts compare to the number of possible grams? (2 points)
+   
+   Answer:
+   For Business dataset (vocabulary size = 11,916):
+   - Possible 2-grams: 11,916^2 = 141,991,056
+   - Possible 3-grams: 11,916^3 = 1,691,965,423,296
+   
+   For Sports dataset (vocabulary size = 10,607):
+   - Possible 2-grams: 10,607^2 = 112,508,449
+   - Possible 3-grams: 10,607^3 = 1,193,377,118,543
+   
+   Comparison: The empirical counts are drastically smaller than the possible n-grams. 
+   For business: 83,819 / 141,991,056 = 0.06% of possible 2-grams observed
+                 141,221 / 1,691,965,423,296 = 0.000008% of possible 3-grams observed
+   
+   This demonstrates the sparsity problem in n-gram models - only a tiny fraction of 
+   possible n-grams actually occur in natural language, which is why smoothing techniques 
+   like Laplace smoothing are necessary.
+
+
+4.2 Song Attribution (8 points)
+-------------------------------
+
+1. What are the perplexity scores of the test lyrics against each of the language models? (3 points)
+   
+   (a) Taylor Swift: 116.10
+   (b) Green Day: 419.51
+   (c) Ed Sheeran: 418.52
+
+2. Who is most likely to be the lyricist according to the tri-gram? (1 point)
+   Answer: Taylor Swift (lowest perplexity of 116.10)
+
+3. Who is most likely to be the lyricist according to the bi-gram? (1 point)
+   Answer: Taylor Swift (lowest perplexity of 82.87)
+
+4. What is the accuracy score of each model in song attribution? (1 point)
+   (a) Bi-gram model: 28.57%
+   (b) Tri-gram model: 28.57%
+
+5. Which models are able to correctly identify Taylor Swift's lyrics? Which has a lower perplexity for Taylor Swift, and what does this tell us? (2 points)
+   
+   Answer: Both the bi-gram and tri-gram models correctly identify Taylor Swift as the 
+   lyricist of the test lyrics (both assign the lowest perplexity to the Taylor Swift model).
+   
+   The bi-gram model has a lower perplexity (82.87) compared to the tri-gram model (116.10) 
+   for Taylor Swift's lyrics. This suggests that:
+   
+   1. The bi-gram model generalizes better on this dataset because it has fewer parameters 
+      to estimate and suffers less from data sparsity.
+   2. Tri-grams are more specific and may not have been observed frequently enough in the 
+      training data, leading to higher smoothed probabilities being applied.
+   3. For smaller corpora like song lyrics, simpler models (bi-grams) may outperform more 
+      complex models (tri-grams) due to better coverage of the test vocabulary.
+
+
+4.3 Transformer Encoder for Record Classification (8 points)
+------------------------------------------------------------
+
+1. Report your training and validation accuracy for the Transformer Encoder classifier. (4 points)
+   
+   Answer:
+   - Final Training Accuracy: 80.88%
+   - Validation (Test) Accuracy: 34.29%
+   
+   Note: The significant gap between training and validation accuracy suggests overfitting,
+   which is common when training on small datasets. The model learns the training data well
+   but does not generalize to unseen test samples.
+
+2. Analyze the self-attention weights for the first line in the following files. Which words receive the most attention across both layers? (4 points)
+   
+   s1 (The Tortured Poets Department):
+   - First line: "i was supposed to be sent away"
+   - Layer 1: Most attention on "sent" (heads focus on: "was", "sent")
+   - Layer 2: Most attention on "sent" (heads focus on: "away", "sent")
+   - Overall: "sent" receives the most attention across both layers
+   
+   s2 (So Long, London):
+   - First line: "i saw in my mind fairy lights through the mist"
+   - Layer 1: Most attention on "mist" (heads focus on: "mist", "mist")
+   - Layer 2: Most attention on "mist" (heads focus on: "mist", "lights")
+   - Overall: "mist" receives the most attention across both layers
+   
+   s3 (Down Bad):
+   - First line: "did you really beam me up"
+   - Layer 1: Most attention on "beam" (heads focus on: "beam", "beam")
+   - Layer 2: Most attention on "beam" (heads focus on: "did", "beam")
+   - Overall: "beam" receives the most attention across both layers
+   
+   Analysis: The model tends to focus on semantically meaningful content words (verbs like 
+   "sent", "beam" and nouns like "mist") rather than function words. Different attention 
+   heads capture different relationships - some focus on the same high-attention tokens 
+   while others attend to different words, demonstrating multi-head attention's ability 
+   to capture diverse patterns.
+
+
+4.4 Comparison to a GPT (14 points)
+-----------------------------------
+
+1. What is the perplexity of your N-gram model? (2 points)
+   Answer: 177.48
+
+2. What is the perplexity of the GPT-2 model? (2 points)
+   Answer: 37.79
+
+3. How might you reason about the differences in perplexity between these two models? (6 points)
+   
+   Answer: The GPT-2 model achieves significantly lower perplexity (37.79) compared to 
+   the N-gram model (177.48). This difference can be explained by several factors:
+   
+   Parameters:
+   - N-gram model: Has relatively few parameters (~10K-20K), limited to storing observed 
+     n-gram counts and smoothed probabilities.
+   - GPT-2 (DistilGPT-2): Has ~82 million parameters, allowing it to learn complex patterns 
+     and representations.
+   
+   Vocabulary Size:
+   - N-gram model: Limited to vocabulary seen in the training corpus, with smoothing for 
+     unseen n-grams.
+   - GPT-2: Uses BPE tokenization with ~50K subword tokens, enabling it to handle any input 
+     text effectively, including rare and OOV words.
+   
+   Training Data:
+   - N-gram model: Trained only on the small tech-small.txt file.
+   - GPT-2: Pre-trained on WebText, a massive corpus of ~40GB of text from the internet, 
+     giving it broad world knowledge and linguistic understanding.
+   
+   Context Window:
+   - N-gram (trigram): Can only consider 2 previous tokens.
+   - GPT-2: Can attend to up to 1024 tokens, capturing long-range dependencies.
+   
+   The combination of more parameters, larger training data, and longer context windows 
+   allows GPT-2 to model language much more effectively, resulting in lower perplexity.
+
+4. What are the trade-offs between a task-specific Transformer Encoder versus a large-scale generative model like GPT-2 for classification tasks? (4 points)
+   
+   Answer:
+   
+   Task-Specific Transformer Encoder:
+   Advantages:
+   - Smaller model size, faster inference, lower computational cost
+   - Can be trained from scratch on domain-specific data
+   - More interpretable attention patterns for analysis
+   - Better suited for bidirectional understanding (looks at full context)
+   - Lower memory requirements for deployment
+   
+   Disadvantages:
+   - Requires labeled training data for the specific task
+   - Limited generalization to new domains
+   - May underperform when training data is scarce
+   
+   Large-Scale GPT-2:
+   Advantages:
+   - Pre-trained on massive data, captures broad linguistic knowledge
+   - Can be fine-tuned with minimal task-specific data
+   - Strong zero-shot and few-shot capabilities
+   - Better handling of rare words and diverse vocabulary
+   
+   Disadvantages:
+   - Much larger model, higher computational and memory costs
+   - May be overkill for simple classification tasks
+   - Autoregressive (left-to-right), not naturally suited for classification
+   - Harder to interpret and explain predictions
+   - Environmental cost of training and running large models
+   
+   For classification tasks specifically, a task-specific encoder is often preferred when 
+   sufficient labeled data is available, as it provides a good balance of performance 
+   and efficiency. GPT-2 style models are better when labeled data is limited or when 
+   the task requires generating explanations alongside classifications.
